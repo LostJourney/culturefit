@@ -116,6 +116,7 @@ const festivals = [
 ];
 
 const preferenceForm = document.querySelector("#preferenceForm");
+const introSection = document.querySelector(".intro-section");
 const surveyPanel = document.querySelector("#surveyPanel");
 const resultPanel = document.querySelector("#resultPanel");
 const popularList = document.querySelector("#popularList");
@@ -126,6 +127,8 @@ const popularPanel = document.querySelector("#popularPanel");
 const festivalModal = document.querySelector("#festivalModal");
 const modalContent = document.querySelector("#modalContent");
 const loginButton = document.querySelector("#loginButton");
+const accountDropdown = document.querySelector("#accountDropdown");
+const logoutButton = document.querySelector("#logoutButton");
 const myPageNavButton = document.querySelector("#myPageNavButton");
 const eventRegisterNavButton = document.querySelector("#eventRegisterNavButton");
 const loginPanel = document.querySelector("#loginPanel");
@@ -136,8 +139,10 @@ const signupForm = document.querySelector("#signupForm");
 const loginMessage = document.querySelector("#loginMessage");
 const signupMessage = document.querySelector("#signupMessage");
 const goSignupButton = document.querySelector("#goSignupButton");
+const backToLoginButton = document.querySelector("#backToLoginButton");
 const myPageCard = document.querySelector("#myPageCard");
 const myPageSummary = document.querySelector("#myPageSummary");
+const savedEventsList = document.querySelector("#savedEventsList");
 const registrationPanel = document.querySelector("#registrationPanel");
 const registrationForm = document.querySelector("#registrationForm");
 const registrationBackButton = document.querySelector("#registrationBackButton");
@@ -151,6 +156,7 @@ const accounts = [
 
 let currentUser = null;
 let pendingProtectedAction = null;
+const savedFestivalIds = new Set();
 
 // 네이버 지도 연결: 모바일에서는 네이버지도 앱 길찾기, 데스크톱/앱 미설치 환경에서는 웹 검색으로 이동합니다.
 function openNaverDirections({ title, location, lat, lng }) {
@@ -270,7 +276,36 @@ function getRoleLabel(role) {
   return role === "business" ? "사업자" : "일반 이용자";
 }
 
+function toggleSavedFestival(id) {
+  const festivalId = Number(id);
+
+  if (savedFestivalIds.has(festivalId)) {
+    savedFestivalIds.delete(festivalId);
+    return false;
+  }
+
+  savedFestivalIds.add(festivalId);
+  return true;
+}
+
+function syncSaveButtons(id, isSaved) {
+  document.querySelectorAll(`.save-button[data-id="${id}"]`).forEach((button) => {
+    button.classList.toggle("is-saved", isSaved);
+    button.textContent = isSaved ? "저장 완료" : "관심 저장";
+  });
+}
+
+function handleSaveButton(saveButton) {
+  const isSaved = toggleSavedFestival(saveButton.dataset.id);
+  syncSaveButtons(saveButton.dataset.id, isSaved);
+
+  if (!myPagePanel.classList.contains("is-hidden")) {
+    renderSavedEvents();
+  }
+}
+
 function hidePrimaryPanels() {
+  introSection.classList.add("is-hidden");
   surveyPanel.classList.add("is-hidden");
   popularPanel.classList.add("is-hidden");
   resultPanel.classList.add("is-hidden");
@@ -282,7 +317,19 @@ function hidePrimaryPanels() {
 }
 
 function updateAuthButton() {
-  loginButton.textContent = currentUser ? "로그아웃" : "로그인";
+  if (!currentUser) {
+    loginButton.classList.remove("is-account");
+    loginButton.setAttribute("aria-expanded", "false");
+    loginButton.textContent = "로그인";
+    accountDropdown.classList.add("is-hidden");
+    return;
+  }
+
+  loginButton.classList.add("is-account");
+  loginButton.innerHTML = `
+    <img class="user-avatar" src="resources/user.png" alt="" aria-hidden="true">
+    <span class="account-name">${currentUser.id}</span>
+  `;
 }
 
 function requireLogin(actionName, callback) {
@@ -293,6 +340,24 @@ function requireLogin(actionName, callback) {
 
   pendingProtectedAction = actionName;
   showLoginPanel();
+}
+
+function requireBusinessAccount(callback) {
+  if (!currentUser) {
+    pendingProtectedAction = "registration";
+    showLoginPanel();
+    return;
+  }
+
+  if (currentUser.role !== "business") {
+    pendingProtectedAction = null;
+    alert("행사 등록은 사업자 전용입니다.");
+    showMainPanels();
+    surveyPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  callback();
 }
 
 function showLoginPanel() {
@@ -322,6 +387,7 @@ function showMyPagePanel() {
     <div class="mypage-row"><strong>전화번호</strong><span>${currentUser.phone || "미입력"}</span></div>
     <div class="mypage-row"><strong>이메일</strong><span>${currentUser.email || "미입력"}</span></div>
   `;
+  renderSavedEvents();
   myPagePanel.classList.remove("is-hidden");
   myPagePanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -354,6 +420,7 @@ function createRegisteredFestival(formData) {
 }
 
 function showMainPanels() {
+  introSection.classList.remove("is-hidden");
   loginPanel.classList.add("is-hidden");
   signupPanel.classList.add("is-hidden");
   myPagePanel.classList.add("is-hidden");
@@ -546,6 +613,50 @@ function renderRegisteredFestivals() {
   }).join("");
 }
 
+function renderSavedEvents() {
+  const savedFestivals = festivals.filter((festival) => savedFestivalIds.has(festival.id));
+
+  if (savedFestivals.length === 0) {
+    savedEventsList.innerHTML = '<p class="empty-state">아직 관심 저장한 행사가 없습니다.</p>';
+    return;
+  }
+
+  savedEventsList.innerHTML = savedFestivals.map((festival) => {
+    const categoryPills = festival.category
+      .map((category) => `<span class="pill">${category}</span>`)
+      .join("");
+
+    return `
+      <article class="festival-card" tabindex="0" data-id="${festival.id}">
+        <div class="festival-image-wrap">
+          <img class="festival-image" src="${festival.image}" alt="${festival.title} 이미지">
+          ${festival.scale === "소규모" ? '<span class="scale-badge">소규모 행사</span>' : ""}
+        </div>
+        <div class="festival-content">
+          <div class="festival-meta">
+            <span class="pill">${festival.location}</span>
+            <span class="pill">${festival.scale}</span>
+            ${categoryPills}
+          </div>
+          <h3 class="festival-title">${festival.title}</h3>
+          <p class="festival-date">${festival.date}</p>
+          <div class="card-actions">
+            <button class="action-button save-button is-saved" type="button" data-id="${festival.id}">저장 완료</button>
+            <button
+              class="action-button map"
+              type="button"
+              data-title="${festival.title}"
+              data-location="${festival.location}"
+              data-lat="${festival.coordinates.lat ?? ""}"
+              data-lng="${festival.coordinates.lng ?? ""}"
+            >길찾기</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
 // 취향 조사: 폼 제출 시 입력값을 읽고 조사 영역을 숨긴 뒤 추천 결과 영역을 노출합니다.
 preferenceForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -561,6 +672,7 @@ preferenceForm.addEventListener("submit", (event) => {
   renderFestivalCards(recommendations);
 
   resultSummary.textContent = `${preferences.region} · ${preferences.mood} 취향에 맞춰 최적의 3개만 골랐습니다.`;
+  introSection.classList.add("is-hidden");
   surveyPanel.classList.add("is-hidden");
   popularPanel.classList.add("is-hidden");
   resultPanel.classList.remove("is-hidden");
@@ -574,8 +686,7 @@ festivalList.addEventListener("click", (event) => {
   const card = event.target.closest(".festival-card");
 
   if (saveButton) {
-    saveButton.classList.toggle("is-saved");
-    saveButton.textContent = saveButton.classList.contains("is-saved") ? "저장 완료" : "관심 저장";
+    handleSaveButton(saveButton);
     return;
   }
 
@@ -613,8 +724,7 @@ registeredList.addEventListener("click", (event) => {
   const card = event.target.closest(".festival-card");
 
   if (saveButton) {
-    saveButton.classList.toggle("is-saved");
-    saveButton.textContent = saveButton.classList.contains("is-saved") ? "저장 완료" : "관심 저장";
+    handleSaveButton(saveButton);
     return;
   }
 
@@ -624,6 +734,26 @@ registeredList.addEventListener("click", (event) => {
   }
 
   if (event.target.closest("details")) {
+    return;
+  }
+
+  if (card) {
+    openFestivalModal(findFestivalById(card.dataset.id));
+  }
+});
+
+savedEventsList.addEventListener("click", (event) => {
+  const saveButton = event.target.closest(".save-button");
+  const mapButton = event.target.closest(".map");
+  const card = event.target.closest(".festival-card");
+
+  if (saveButton) {
+    handleSaveButton(saveButton);
+    return;
+  }
+
+  if (mapButton) {
+    openNaverDirections(mapButton.dataset);
     return;
   }
 
@@ -659,6 +789,15 @@ registeredList.addEventListener("keydown", (event) => {
   }
 });
 
+savedEventsList.addEventListener("keydown", (event) => {
+  const card = event.target.closest(".festival-card");
+
+  if ((event.key === "Enter" || event.key === " ") && card) {
+    event.preventDefault();
+    openFestivalModal(findFestivalById(card.dataset.id));
+  }
+});
+
 festivalModal.addEventListener("click", (event) => {
   const closeButton = event.target.closest(".modal-close");
   const saveButton = event.target.closest(".save-button");
@@ -670,8 +809,7 @@ festivalModal.addEventListener("click", (event) => {
   }
 
   if (saveButton) {
-    saveButton.classList.toggle("is-saved");
-    saveButton.textContent = saveButton.classList.contains("is-saved") ? "저장 완료" : "관심 저장";
+    handleSaveButton(saveButton);
     return;
   }
 
@@ -688,11 +826,8 @@ document.addEventListener("keydown", (event) => {
 
 loginButton.addEventListener("click", () => {
   if (currentUser) {
-    currentUser = null;
-    pendingProtectedAction = null;
-    updateAuthButton();
-    showMainPanels();
-    surveyPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    const isOpen = accountDropdown.classList.toggle("is-hidden");
+    loginButton.setAttribute("aria-expanded", String(!isOpen));
     return;
   }
 
@@ -700,15 +835,31 @@ loginButton.addEventListener("click", () => {
   showLoginPanel();
 });
 
+logoutButton.addEventListener("click", () => {
+  currentUser = null;
+  pendingProtectedAction = null;
+  updateAuthButton();
+  showMainPanels();
+  surveyPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".account-menu")) {
+    accountDropdown.classList.add("is-hidden");
+    loginButton.setAttribute("aria-expanded", "false");
+  }
+});
+
 myPageNavButton.addEventListener("click", () => {
   requireLogin("mypage", showMyPagePanel);
 });
 
 eventRegisterNavButton.addEventListener("click", () => {
-  requireLogin("registration", showRegistrationPanel);
+  requireBusinessAccount(showRegistrationPanel);
 });
 
 goSignupButton.addEventListener("click", showSignupPanel);
+backToLoginButton.addEventListener("click", showLoginPanel);
 
 document.querySelectorAll(".auth-back-button").forEach((button) => {
   button.addEventListener("click", () => {
@@ -738,12 +889,19 @@ loginForm.addEventListener("submit", (event) => {
 
   if (pendingProtectedAction === "registration") {
     pendingProtectedAction = null;
+    if (currentUser.role !== "business") {
+      alert("행사 등록은 사업자 전용입니다.");
+      showMainPanels();
+      surveyPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     showRegistrationPanel();
     return;
   }
 
   pendingProtectedAction = null;
-  showMyPagePanel();
+  showMainPanels();
+  surveyPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 signupForm.addEventListener("submit", (event) => {
@@ -794,6 +952,7 @@ registrationForm.addEventListener("submit", (event) => {
 
 // 다시 찾기: 결과 화면을 숨기고 취향 조사 폼으로 돌아가 새 추천을 받을 수 있게 합니다.
 retryButton.addEventListener("click", () => {
+  introSection.classList.remove("is-hidden");
   resultPanel.classList.add("is-hidden");
   surveyPanel.classList.remove("is-hidden");
   popularPanel.classList.remove("is-hidden");
