@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>컬처핏 | 지역 축제 맞춤 추천</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="site-header" aria-label="컬처핏 서비스 헤더">
+      <a class="brand-link" href="./index.html" aria-label="컬처핏 홈">
+        <img class="brand-logo" src="resources/culturefit-logo.png" alt="컬처핏 로고">
+      </a>
+      <nav class="desktop-nav" aria-label="주요 메뉴">
+        <a href="#surveyPanel">추천받기</a>
+        <a href="#resultPanel">인기축제</a>
+        <a href="#surveyPanel">지역축제</a>
+        <a href="#surveyPanel">소규모 행사</a>
+        <button class="nav-button" id="myPageNavButton" type="button">마이페이지</button>
+        <button class="nav-button" id="eventRegisterNavButton" type="button">행사 등록</button>
+      </nav>
+      <div class="header-actions" aria-label="사용자 메뉴">
+        <button class="icon-button" type="button" aria-label="관심 행사">♡</button>
+        <button class="login-button" id="loginButton" type="button">로그인</button>
+      </div>
+    </header>
+
+    <section class="intro-section" aria-labelledby="service-title">
+      <p class="eyebrow">CultureFit</p>
+      <h1 id="service-title">오늘 갈만한 축제 TOP3</h1>
+      <p class="intro-copy">
+        취향에 맞는 행사만 빠르게 추천합니다.
+      </p>
+    </section>
+
+    <!-- 취향 조사: 추천을 시작하기 전 사용자 선호 조건을 수집하는 초기 폼입니다. -->
+    <section class="survey-panel" id="surveyPanel" aria-labelledby="survey-title">
+      <div class="section-heading">
+        <h2 id="survey-title">맞춤 검색</h2>
+        <p>조건을 고르면 최적의 Top 3를 보여드려요.</p>
+      </div>
+
+      <form id="preferenceForm" class="preference-form">
+        <div class="form-field">
+          <label for="ageGroup">연령대</label>
+          <select id="ageGroup" name="ageGroup" required>
+            <option value="">선택해 주세요</option>
+            <option value="10대">10대</option>
+            <option value="20대">20대</option>
+            <option value="30대">30대</option>
+            <option value="40대">40대</option>
+            <option value="50대 이상">50대 이상</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="region">관심 지역</label>
+          <select id="region" name="region" required>
+            <option value="">선택해 주세요</option>
+            <option value="경기">경기</option>
+            <option value="서울">서울</option>
+            <option value="부산">부산</option>
+            <option value="대전">대전</option>
+            <option value="전주">전주</option>
+            <option value="제주">제주</option>
+            <option value="강릉">강릉</option>
+            <option value="전체">전체 지역</option>
+          </select>
+        </div>
+
+        <fieldset class="form-field mood-field">
+          <legend>선호하는 축제 분위기</legend>
+          <div class="radio-grid">
+            <label>
+              <input type="radio" name="mood" value="힐링" required>
+              <span>힐링</span>
+            </label>
+            <label>
+              <input type="radio" name="mood" value="먹거리">
+              <span>먹거리</span>
+            </label>
+            <label>
+              <input type="radio" name="mood" value="체험">
+              <span>체험</span>
+            </label>
+            <label>
+              <input type="radio" name="mood" value="활기찬">
+              <span>활기찬</span>
+            </label>
+            <label>
+              <input type="radio" name="mood" value="가족과 함께">
+              <span>가족</span>
+            </label>
+            <label>
+              <input type="radio" name="mood" value="연인과 함께">
+              <span>데이트</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <button class="primary-button" type="submit">나만의 맞춤 축제 찾기</button>
+      </form>
+    </section>
+
+    <!-- 최근 인기 축제: 추천 필터를 사용하기 전에도 탐색할 수 있도록 인기순 축제를 노출합니다. -->
+    <section class="popular-panel" id="popularPanel" aria-labelledby="popular-title">
+      <div class="section-heading">
+        <h2 id="popular-title">최근 인기 축제</h2>
+        <p>많이 저장된 행사부터 빠르게 확인해보세요.</p>
+      </div>
+
+      <div class="popular-list" id="popularList" aria-live="polite"></div>
+    </section>
+
+    <!-- 로그인: 백엔드 연결 없이 시연용 계정으로 인증 흐름을 확인합니다. -->
+    <section class="auth-panel is-hidden" id="loginPanel" aria-labelledby="login-title">
+      <div class="result-topbar">
+        <div class="section-heading">
+          <h2 id="login-title">로그인</h2>
+          <p>일반 이용자 aaa / 111, 사업자 bbb / 222로 시연할 수 있어요.</p>
+        </div>
+        <button class="ghost-button auth-back-button" type="button">돌아가기</button>
+      </div>
+
+      <form class="auth-form" id="loginForm">
+        <div class="form-field">
+          <label for="loginId">아이디</label>
+          <input id="loginId" name="loginId" type="text" placeholder="아이디" required>
+        </div>
+        <div class="form-field">
+          <label for="loginPassword">비밀번호</label>
+          <input id="loginPassword" name="loginPassword" type="password" placeholder="비밀번호" required>
+        </div>
+        <p class="form-message" id="loginMessage" aria-live="polite"></p>
+        <button class="primary-button full-field" type="submit">로그인하기</button>
+        <button class="ghost-button full-field" id="goSignupButton" type="button">회원가입</button>
+      </form>
+    </section>
+
+    <!-- 회원가입: 일반 이용자와 사업자를 선택하고 공통 계정 정보를 입력합니다. -->
+    <section class="auth-panel is-hidden" id="signupPanel" aria-labelledby="signup-title">
+      <div class="result-topbar">
+        <div class="section-heading">
+          <h2 id="signup-title">회원가입</h2>
+          <p>회원 유형을 선택하고 아이디와 비밀번호를 입력해 주세요.</p>
+        </div>
+        <button class="ghost-button auth-back-button" type="button">돌아가기</button>
+      </div>
+
+      <form class="auth-form" id="signupForm">
+        <fieldset class="form-field full-field">
+          <legend>회원 유형</legend>
+          <div class="radio-grid account-type-grid">
+            <label>
+              <input type="radio" name="signupRole" value="user" checked>
+              <span>일반 이용자</span>
+            </label>
+            <label>
+              <input type="radio" name="signupRole" value="business">
+              <span>사업자</span>
+            </label>
+          </div>
+        </fieldset>
+        <div class="form-field">
+          <label for="signupId">아이디</label>
+          <input id="signupId" name="signupId" type="text" placeholder="아이디" required>
+        </div>
+        <div class="form-field">
+          <label for="signupPassword">비밀번호</label>
+          <input id="signupPassword" name="signupPassword" type="password" placeholder="비밀번호" required>
+        </div>
+        <div class="form-field">
+          <label for="signupPhone">전화번호 (선택)</label>
+          <input id="signupPhone" name="signupPhone" type="tel" placeholder="010-0000-0000">
+        </div>
+        <div class="form-field">
+          <label for="signupEmail">이메일 (선택)</label>
+          <input id="signupEmail" name="signupEmail" type="email" placeholder="culturefit@example.com">
+        </div>
+        <p class="form-message" id="signupMessage" aria-live="polite"></p>
+        <button class="primary-button full-field" type="submit">가입하기</button>
+      </form>
+    </section>
+
+    <!-- 마이페이지: 로그인된 사용자 정보를 시연용으로 보여줍니다. -->
+    <section class="mypage-panel is-hidden" id="myPagePanel" aria-labelledby="mypage-title">
+      <div class="result-topbar">
+        <div class="section-heading">
+          <h2 id="mypage-title">마이페이지</h2>
+          <p id="myPageSummary">로그인 정보를 확인할 수 있습니다.</p>
+        </div>
+        <button class="ghost-button auth-back-button" type="button">돌아가기</button>
+      </div>
+
+      <div class="mypage-card" id="myPageCard"></div>
+    </section>
+
+    <!-- 행사 등록: 행사 업체가 MVP 안에서 신규 행사를 같은 카드 구조로 등록할 수 있는 입력 창입니다. -->
+    <section class="registration-panel is-hidden" id="registrationPanel" aria-labelledby="registration-title">
+      <div class="result-topbar">
+        <div class="section-heading">
+          <h2 id="registration-title">행사 등록</h2>
+          <p>입력한 행사는 같은 행사 배열에 추가되어 카드로 표시됩니다.</p>
+        </div>
+        <button class="ghost-button" id="registrationBackButton" type="button">돌아가기</button>
+      </div>
+
+      <form class="registration-form" id="registrationForm">
+        <div class="form-field">
+          <label for="businessName">업체명</label>
+          <input id="businessName" name="businessName" type="text" placeholder="예: 컬처기획" required>
+        </div>
+        <div class="form-field">
+          <label for="eventTitle">행사명</label>
+          <input id="eventTitle" name="eventTitle" type="text" placeholder="예: 동네 공방 마켓" required>
+        </div>
+        <div class="form-field">
+          <label for="eventLocation">행사 위치</label>
+          <input id="eventLocation" name="eventLocation" type="text" placeholder="예: 서울 성수동" required>
+        </div>
+        <div class="form-field">
+          <label for="eventDate">행사 일정</label>
+          <input id="eventDate" name="eventDate" type="text" placeholder="예: 2026.07.01 - 2026.07.03" required>
+        </div>
+        <div class="form-field">
+          <label for="eventScale">행사 규모</label>
+          <select id="eventScale" name="eventScale" required>
+            <option value="소규모">소규모</option>
+            <option value="대규모">대규모</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="eventCategory">대표 분위기</label>
+          <select id="eventCategory" name="eventCategory" required>
+            <option value="힐링">힐링</option>
+            <option value="먹거리">먹거리</option>
+            <option value="체험">체험</option>
+            <option value="활기찬">활기찬</option>
+            <option value="가족과 함께">가족과 함께</option>
+            <option value="연인과 함께">연인과 함께</option>
+          </select>
+        </div>
+        <div class="form-field full-field">
+          <label for="eventTransportation">교통편 정보</label>
+          <textarea id="eventTransportation" name="eventTransportation" rows="3" placeholder="주차장 여부, 가까운 역, 셔틀 운영 여부를 입력해 주세요." required></textarea>
+        </div>
+        <div class="form-field full-field">
+          <label for="eventFacilities">주변 상권 정보</label>
+          <textarea id="eventFacilities" name="eventFacilities" rows="3" placeholder="먹거리, 플리마켓, 주변 상권 정보를 입력해 주세요." required></textarea>
+        </div>
+        <div class="form-field">
+          <label for="eventImage">이미지 URL</label>
+          <input id="eventImage" name="eventImage" type="url" placeholder="비워두면 기본 이미지 사용">
+        </div>
+        <div class="form-field">
+          <label for="representativeName">대표자 이름</label>
+          <input id="representativeName" name="representativeName" type="text" placeholder="예: 김컬처" required>
+        </div>
+        <div class="form-field">
+          <label for="representativePhone">대표자 번호</label>
+          <input id="representativePhone" name="representativePhone" type="tel" placeholder="예: 010-1234-5678" required>
+        </div>
+        <button class="primary-button full-field" type="submit">행사 등록하기</button>
+      </form>
+    </section>
+
+    <!-- 등록된 행사: 업체가 등록한 신규 행사를 기존 행사 카드와 같은 구조로 보여줍니다. -->
+    <section class="registered-panel is-hidden" id="registeredPanel" aria-labelledby="registered-title">
+      <div class="section-heading">
+        <h2 id="registered-title">등록된 행사</h2>
+        <p>방금 등록한 행사는 추천 데이터에도 함께 반영됩니다.</p>
+      </div>
+      <div class="card-list" id="registeredList" aria-live="polite"></div>
+    </section>
+
+    <!-- 추천 결과: 폼 제출 후 JavaScript가 Top 3 카드만 동적으로 렌더링합니다. -->
+    <section class="result-panel is-hidden" id="resultPanel" aria-labelledby="result-title">
+      <div class="result-topbar">
+        <div class="section-heading">
+          <h2 id="result-title">추천 축제 Top 3</h2>
+          <p id="resultSummary">정보 과부하 없이 딱 3개만 보여드릴게요.</p>
+        </div>
+        <button class="ghost-button" id="retryButton" type="button">다시 찾기</button>
+      </div>
+
+      <div class="card-list" id="festivalList" aria-live="polite"></div>
+    </section>
+
+    <footer class="site-footer">
+      <p>사업자 번호 010-xxxx-xxxx</p>
+      <p>사업지 주소 서울시 서대문구 명지전문대</p>
+    </footer>
+  </main>
+
+  <!-- 상세 모달: 축제 카드를 누르면 배경을 어둡게 처리하고 상세 정보를 중앙에 보여줍니다. -->
+  <div class="modal-overlay is-hidden" id="festivalModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <article class="modal-card" id="modalContent"></article>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
