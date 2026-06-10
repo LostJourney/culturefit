@@ -49,17 +49,17 @@
                     <a href="events.html?category=공연">#공연</a>
                 </div>
                 <div class="hero-actions">
-                    <a class="primary-button" href="events.html">행사 둘러보기</a>
+                    <button class="primary-button" id="ai-recommend-button" type="button">AI 추천</button>
                     <a class="secondary-button" href="register.html">무료로 행사 등록하기</a>
                 </div>
             </div>
             <div class="hero-feature" aria-label="추천 행사 미리보기">
                 <article class="hero-event-card hero-event-card-large">
-                    <img src="resources/lake-festival.png" alt="일산호수공원 행사">
+                    <img src="resources/lake-festival.png" alt="횡성 호수길 축제">
                     <div>
                         <span>이번 주 추천</span>
-                        <strong>고양 동네 플리마켓</strong>
-                        <p>일산호수공원 · 무료</p>
+                        <strong>횡성 호수길 축제</strong>
+                        <p>횡성호수길 · 무료</p>
                     </div>
                 </article>
                 <article class="hero-event-card">
@@ -71,6 +71,22 @@
                     </div>
                 </article>
             </div>
+        </section>
+
+        <section class="ai-recommend-section is-hidden" id="ai-recommend-section" aria-live="polite">
+            <div class="ai-recommend-top">
+                <article class="ai-picked-event" id="ai-picked-event"></article>
+                <aside class="ai-recommend-comment">
+                    <div class="ai-chat">
+                        <img class="ai-avatar" src="resources/culturefit-only-logo.png" alt="CultureFit AI">
+                        <div class="ai-bubble">
+                            <span>CultureFit AI</span>
+                            <p>현재 지역 행사 흐름과 무료 여부, 이동 편의성, 주변 상권 정보를 기준으로 방문하기 좋은 행사를 골랐습니다.</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+            <div class="ai-recommend-grid" id="ai-recommend-grid"></div>
         </section>
 
         <section class="section-block">
