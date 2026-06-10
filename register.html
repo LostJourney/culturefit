@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>행사 등록 | CultureFit</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand" aria-label="CultureFit 홈">
+                <img src="resources/culturefit-logo.png" alt="CultureFit logo">
+                <span>CultureFit</span>
+            </a>
+            <nav class="site-nav" aria-label="주요 사이트 메뉴">
+                <a href="events.html">행사 찾기</a>
+                <a href="register.html">행사 등록</a>
+                <a href="admin.html">관리자</a>
+            </nav>
+            <div class="header-actions">
+                <a class="region-button" href="events.html">지역 선택</a>
+                <span class="location-status" aria-live="polite"></span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-title">
+            <p class="eyebrow">Submit</p>
+            <h1>무료로 행사 등록하기</h1>
+            <p>등록된 행사는 우선 pending 상태로 저장되고, 관리자 승인 후 사용자 화면에 노출됩니다.</p>
+        </section>
+
+        <form class="event-form" id="event-form">
+            <label>행사명 <input type="text" name="title" required></label>
+            <label>카테고리
+                <select name="category" required>
+                    <option value="">선택</option>
+                    <option value="무료 행사">무료 행사</option>
+                    <option value="플리마켓">플리마켓</option>
+                    <option value="공연">공연</option>
+                    <option value="체험">체험</option>
+                    <option value="전시">전시</option>
+                </select>
+            </label>
+            <label>지역 <input type="text" name="region" required></label>
+            <label class="form-wide">주소 <input type="text" name="address" required></label>
+            <label>시작일 <input type="date" name="startDate" required></label>
+            <label>종료일 <input type="date" name="endDate" required></label>
+            <label>시간 <input type="text" name="time" placeholder="13:00~18:00" required></label>
+            <label>참가비 <input type="text" name="price" placeholder="무료 또는 5,000원" required></label>
+            <label class="form-wide">대표 이미지 URL <input type="url" name="image" placeholder="https://example.com/image.jpg"></label>
+            <label class="form-wide">행사 설명 <textarea name="description" rows="5" required></textarea></label>
+            <label class="form-wide">교통 정보 <textarea name="transportInfo" rows="3" required></textarea></label>
+            <label class="form-wide">주차 정보 <textarea name="parkingInfo" rows="3" required></textarea></label>
+            <label class="form-wide">주변 상권 정보 <input type="text" name="nearbyStores" placeholder="카페 거리, 편의점, 식당가"></label>
+            <label>신청 링크 <input type="url" name="applyLink" placeholder="https://example.com"></label>
+            <label>문의처 <input type="text" name="contact" required></label>
+            <div class="form-actions form-wide">
+                <button class="primary-button" type="submit">등록 버튼</button>
+                <p id="register-message" role="status"></p>
+            </div>
+        </form>
+    </main>
+
+    <footer class="site-footer">
+        <p>CultureFit. 지역의 작은 행사를 한곳에.</p>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/location.js"></script>
+    <script src="js/register.js"></script>
+</body>
+</html>

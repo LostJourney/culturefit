@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>행사 찾기 | CultureFit</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand" aria-label="CultureFit 홈">
+                <img src="resources/culturefit-logo.png" alt="CultureFit logo">
+                <span>CultureFit</span>
+            </a>
+            <nav class="site-nav" aria-label="주요 사이트 메뉴">
+                <a href="events.html">행사 찾기</a>
+                <a href="register.html">행사 등록</a>
+                <a href="admin.html">관리자</a>
+            </nav>
+            <div class="header-actions">
+                <a class="region-button" href="events.html">지역 선택</a>
+                <span class="location-status" aria-live="polite"></span>
+                <form class="search-wrap" action="events.html" method="get">
+                    <input type="search" name="q" id="search-input" placeholder="행사명, 지역 검색" aria-label="행사 검색">
+                    <button class="search-button" type="submit" aria-label="검색">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M10.8 4a6.8 6.8 0 1 1 0 13.6 6.8 6.8 0 0 1 0-13.6Zm0 2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6Zm5.1 9.5 4.1 4.1-1.4 1.4-4.1-4.1 1.4-1.4Z"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-title">
+            <p class="eyebrow">Events</p>
+            <h1>행사 목록</h1>
+            <p>지역, 날짜, 카테고리, 참가비 조건으로 승인된 지역행사를 찾아보세요.</p>
+        </section>
+
+        <section class="filter-panel" aria-label="행사 필터">
+            <label>
+                지역
+                <select id="region-filter">
+                    <option value="">전체 지역</option>
+                </select>
+            </label>
+            <label>
+                날짜
+                <input type="date" id="date-filter">
+            </label>
+            <label>
+                카테고리
+                <select id="category-filter">
+                    <option value="">전체 카테고리</option>
+                    <option value="무료 행사">무료 행사</option>
+                    <option value="플리마켓">플리마켓</option>
+                    <option value="공연">공연</option>
+                    <option value="체험">체험</option>
+                    <option value="전시">전시</option>
+                </select>
+            </label>
+            <label>
+                무료/유료
+                <select id="price-filter">
+                    <option value="">전체</option>
+                    <option value="무료">무료</option>
+                    <option value="유료">유료</option>
+                </select>
+            </label>
+            <button class="secondary-button" id="reset-filters" type="button">필터 초기화</button>
+        </section>
+
+        <section>
+            <div class="result-summary" id="result-summary"></div>
+            <div class="event-grid" id="event-list"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>CultureFit. 지역의 작은 행사를 한곳에.</p>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/location.js"></script>
+    <script src="js/events.js"></script>
+</body>
+</html>
