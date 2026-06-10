@@ -11,26 +11,24 @@ function initKakaoMap(event) {
         return;
     }
 
-    if (!window.kakao || !window.kakao.maps) {
-        mapMessage.textContent = "Kakao 지도 API 키를 설정하면 지도가 표시됩니다.";
+    if (!window.kakao || !window.kakao.maps || !window.kakao.maps.Map) {
+        mapMessage.textContent = "Kakao 지도 API를 불러오지 못했습니다. 카카오 개발자 콘솔의 Web 플랫폼 도메인을 확인해 주세요.";
         return;
     }
 
-    kakao.maps.load(() => {
-        const eventPosition = new kakao.maps.LatLng(event.latitude, event.longitude);
-        const map = new kakao.maps.Map(mapContainer, {
-            center: eventPosition,
-            level: 4
-        });
-        const marker = new kakao.maps.Marker({
-            position: eventPosition
-        });
-        const infoWindow = new kakao.maps.InfoWindow({
-            content: `<div class="map-info-window">${event.title}</div>`
-        });
-
-        marker.setMap(map);
-        infoWindow.open(map, marker);
-        mapMessage.textContent = "지도에서 행사 위치를 확인할 수 있습니다.";
+    const eventPosition = new kakao.maps.LatLng(event.latitude, event.longitude);
+    const map = new kakao.maps.Map(mapContainer, {
+        center: eventPosition,
+        level: 4
     });
+    const marker = new kakao.maps.Marker({
+        position: eventPosition
+    });
+    const infoWindow = new kakao.maps.InfoWindow({
+        content: `<div class="map-info-window">${event.title}</div>`
+    });
+
+    marker.setMap(map);
+    infoWindow.open(map, marker);
+    mapMessage.textContent = "지도에서 행사 위치를 확인할 수 있습니다.";
 }
